@@ -19,10 +19,12 @@ import Navbar from "../components/navbar";
 import Head from "next/head";
 import Card from "../components/card";
 import Spinner from "../components/spinner";
+import { useRouter } from "next/router";
 
 export default function Component() {
   const [data, setData] = useState(null);
   const [isLoading, setLoading] = useState(false);
+  const router = useRouter();
 
   const { data: session } = useSession();
 
@@ -34,7 +36,7 @@ export default function Component() {
         setData(data);
         setLoading(false);
       });
-  }, [session]);
+  }, [session, router]);
 
   if (session) {
     if (data) {

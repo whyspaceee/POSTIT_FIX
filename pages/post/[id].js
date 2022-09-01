@@ -23,7 +23,7 @@ export default function Post() {
     }
 
     console.log("fetching");
-  }, [session]);
+  }, [session, router]);
 
   async function submitDelete() {
     await fetch(`/api/posts/${id}`, {
