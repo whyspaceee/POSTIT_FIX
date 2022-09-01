@@ -36,7 +36,8 @@ export default function Component() {
         setData(data);
         setLoading(false);
       });
-  }, [session, router]);
+    console.log("fetching");
+  }, [session, router.query.slug]);
 
   if (session) {
     if (data) {
