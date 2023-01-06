@@ -3,33 +3,34 @@ import { signOut, useSession } from "next-auth/react";
 import Navbar from "../../components/navbar";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 export default function Post() {
-  const router = useRouter();
-  const [data, setData] = useState(null);
   const [edit, setEdit] = useState(false);
-
-  const { data: session } = useSession();
+  const { session } = useSession();
+  const router = useRouter();
   const { id } = router.query;
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (session) {
-      fetch(`/api/posts/${id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setData(data);
-          console.log(data);
-        });
+  const { isLoading, data, error } = useQuery([session], () =>
+    fetch(`/api/posts/${id}`).then((res) => res.json())
+  );
+
+  const deleteMutation = useMutation(
+    () => {
+      return (
+        fetch(`/api/posts/${id}`),
+        {
+          method: "DELETE",
+        }
+      );
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([session]);
+      },
     }
-
-    console.log("fetching");
-  }, [session, router]);
-
-  async function submitDelete() {
-    await fetch(`/api/posts/${id}`, {
-      method: "DELETE",
-    });
-  }
+  );
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -51,6 +52,7 @@ export default function Post() {
 
       if (data?.id) {
         resetForm();
+        queryClient.invalidateQueries([session]);
       }
     },
   });
@@ -113,7 +115,7 @@ export default function Post() {
               </button>
               <button
                 onClick={() => {
-                  submitDelete();
+                  deleteMutation();
                   router.push("/");
                 }}
                 className="my-6 ml-4 text-white bg-blue-700 hover:bg-blue-800 

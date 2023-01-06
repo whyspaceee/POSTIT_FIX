@@ -22,7 +22,7 @@ export default function Create() {
 
       if (data?.id) {
         resetForm();
-        queryClient.invalidateQueries();
+        queryClient.invalidateQueries([session]);
       }
     },
   });
