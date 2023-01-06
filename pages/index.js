@@ -25,9 +25,9 @@ import { useQuery } from "react-query";
 export default function Component() {
   const { data: session } = useSession();
 
-  const { isLoading, error, data } = useQuery(session, () => {
-    fetch("api/posts").then((res) => res.json());
-  });
+  const { isLoading, error, data } = useQuery([session], () =>
+    fetch("api/posts").then((res) => res.json())
+  );
 
   if (session) {
     if (data) {
