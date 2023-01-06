@@ -20,24 +20,14 @@ import Head from "next/head";
 import Card from "../components/card";
 import Spinner from "../components/spinner";
 import { useRouter } from "next/router";
+import { useQuery } from "react-query";
 
 export default function Component() {
-  const [data, setData] = useState(null);
-  const [isLoading, setLoading] = useState(false);
-  const router = useRouter();
-
   const { data: session } = useSession();
 
-  useEffect(() => {
-    setLoading(true);
-    fetch("/api/posts")
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-        setLoading(false);
-      });
-    console.log("fetching");
-  }, [session, router.pathname]);
+  const { isLoading, error, data } = useQuery(session, () => {
+    fetch("api/posts").then((res) => res.json());
+  });
 
   if (session) {
     if (data) {

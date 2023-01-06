@@ -2,8 +2,11 @@ import { useFormik } from "formik";
 import { signOut } from "next-auth/react";
 import Navbar from "../../components/navbar";
 import { useRouter } from "next/router";
+import { useQueryClient } from "react-query";
 
 export default function Create() {
+  const queryClient = useQueryClient();
+
   const formik = useFormik({
     initialValues: { title: "", content: "" },
     onSubmit: async (values, { setSubmitting, resetForm }) => {
@@ -19,6 +22,7 @@ export default function Create() {
 
       if (data?.id) {
         resetForm();
+        queryClient.invalidateQueries();
       }
     },
   });
